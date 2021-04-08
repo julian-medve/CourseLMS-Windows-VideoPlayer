@@ -7,4 +7,10 @@ This app runs as a video player for http://lms.olmaa.net/ with special features 
 
 <img src = "Screenshots/Screenshot_1.png" />
 
+<img src = "Screenshots/Screenshot_2.png" />
+
+<img src = "Screenshots/Screenshot_3.png" />
+
+<img src = "Screenshots/Screenshot_4.png" />
+
 
