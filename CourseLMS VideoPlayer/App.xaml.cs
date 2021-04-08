@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Net;
 
 namespace CourseLMS_VideoPlayer
 {
@@ -106,6 +107,7 @@ namespace CourseLMS_VideoPlayer
                 // The received URI is eventArgs.Uri.AbsoluteUri
                 Dictionary<string, string> query = ParseQueryString(eventArgs.Uri.OriginalString);
                 string url = query["url"];
+
                 MainPage.webViewMainContent.Navigate(new Uri(url));
             }
         }
