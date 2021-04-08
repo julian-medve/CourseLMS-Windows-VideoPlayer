@@ -116,7 +116,7 @@ namespace CourseLMS_VideoPlayer
                 if (type.Contains("vimeo"))
                     htmlContent = string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
                 if (type.Contains("html5") || type.Contains("file"))
-                    htmlContent = string.Format("<video controls playsinline id=\"player\" class=\"html-video-frame\" src=\"{0}\" type=\"video/mp4\"></video>", url);
+                    htmlContent = string.Format("<video controls playsinline id=\"player\" class=\"html-video-frame\"><source src=\"{0}\" type=\"video/mp4\"></video>", url);
 
 
                 MainPage.webViewMainContent.NavigateToString(htmlContent);
