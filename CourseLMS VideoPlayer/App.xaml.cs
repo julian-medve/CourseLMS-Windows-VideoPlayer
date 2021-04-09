@@ -108,16 +108,19 @@ namespace CourseLMS_VideoPlayer
                 Dictionary<string, string> query = ParseQueryString(eventArgs.Uri.OriginalString);
                 string url = query["url"];
                 string type = query["type"];
+                string id = query["id"];
 
-                string htmlContent = "";
+                string htmlContent = "<body style=\"display: flex;  justify-content: center;  align-items: center;\" >";
 
                 if (type.Contains("youtube"))
                     htmlContent = string.Format("<iframe src=\"{0}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted - media; gyroscope; picture-in-picture\" allowfullscreen></iframe>", url);
                 if (type.Contains("vimeo"))
                     htmlContent = string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
                 if (type.Contains("html5") || type.Contains("file"))
-                    htmlContent = string.Format("<video controls playsinline id=\"player\" class=\"html-video-frame\"><source src=\"{0}\" type=\"video/mp4\"></video>", url);
-
+                    htmlContent += string.Format("<video width=\"100%\" controls playsinline id=\"player\" class=\"html-video-frame\" src=\"{0}\" type=\"video/mp4\"></video>", url);
+                
+                htmlContent += string.Format("<marquee width=\"100%\" behavior=\"scroll\" direction=\"left\" scrollamount=\"1\" style=\"top: 50%; position: absolute; color: gray; font - size: 40px; \">{0}</marquee>", id);
+                htmlContent += "</body>";
 
                 MainPage.webViewMainContent.NavigateToString(htmlContent);
             }

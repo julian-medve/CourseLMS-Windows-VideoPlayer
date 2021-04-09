@@ -38,6 +38,8 @@ namespace CourseLMS_VideoPlayer
 
             webView.Navigate(new Uri("http://lms.olmaa.net/videoplayer/index"));
             webViewMainContent = webView;
+
+            webView.LoadCompleted += async (s, args) => await webView.InvokeScriptAsync("eval", new string[] { "document.body.style.overflowY='hidden'" });
         }
 
         public static WebView webViewMainContent;
