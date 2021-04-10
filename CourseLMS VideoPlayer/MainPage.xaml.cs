@@ -36,6 +36,7 @@ namespace CourseLMS_VideoPlayer
             ApplicationView view = ApplicationView.GetForCurrentView();
             view.IsScreenCaptureEnabled = false;
 
+            //webView.Navigate(new Uri("http://localhost/videoplayer/index"));
             webView.Navigate(new Uri("http://lms.olmaa.net/videoplayer/index"));
             webViewMainContent = webView;
 

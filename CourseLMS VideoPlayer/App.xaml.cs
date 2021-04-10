@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace CourseLMS_VideoPlayer
 {
@@ -23,6 +16,7 @@ namespace CourseLMS_VideoPlayer
     /// </summary>
     sealed partial class App : Application
     {
+        string userId = "";
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -98,6 +92,8 @@ namespace CourseLMS_VideoPlayer
             deferral.Complete();
         }
 
+        string ServerUrl = "http://localhost/api/v1";
+
         protected override void OnActivated(IActivatedEventArgs args)
         {
             if (args.Kind == ActivationKind.Protocol)
@@ -105,24 +101,15 @@ namespace CourseLMS_VideoPlayer
                 ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
                 // TODO: Handle URI activation
                 // The received URI is eventArgs.Uri.AbsoluteUri
+
                 Dictionary<string, string> query = ParseQueryString(eventArgs.Uri.OriginalString);
-                string url = query["url"];
-                string type = query["type"];
-                string id = query["id"];
+                string user = query["user"];
+                string content = query["class"];
+                userId = user;
 
-                string htmlContent = "<body style=\"display: flex;  justify-content: center;  align-items: center;\" >";
-
-                if (type.Contains("youtube"))
-                    htmlContent = string.Format("<iframe src=\"{0}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted - media; gyroscope; picture-in-picture\" allowfullscreen></iframe>", url);
-                if (type.Contains("vimeo"))
-                    htmlContent = string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
-                if (type.Contains("html5") || type.Contains("file"))
-                    htmlContent += string.Format("<video width=\"100%\" controls playsinline id=\"player\" class=\"html-video-frame\" src=\"{0}\" type=\"video/mp4\"></video>", url);
-                
-                htmlContent += string.Format("<marquee width=\"100%\" behavior=\"scroll\" direction=\"left\" scrollamount=\"1\" style=\"top: 50%; position: absolute; color: gray; font - size: 40px; \">{0}</marquee>", id);
-                htmlContent += "</body>";
-
-                MainPage.webViewMainContent.NavigateToString(htmlContent);
+                // Call API
+                string uri = "http://lms.olmaa.net/api/v1/contentWithVideo?userId=" + user + "&contentId=" + content;
+                GetVideoData(uri);
             }
         }
 
@@ -143,6 +130,46 @@ namespace CourseLMS_VideoPlayer
 
             return output;
 
+        }
+
+        public async Task GetVideoData(string uri)
+        {
+            var httpClient = new HttpClient();
+
+            Uri requestUri = new Uri(uri);
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            string httpResponseBody = "";
+
+            try
+            {
+                //Send the GET request
+                httpResponse = await httpClient.GetAsync(requestUri);
+                httpResponse.EnsureSuccessStatusCode();
+                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+
+                JObject jObject = JObject.Parse(httpResponseBody);
+                string type = (string) jObject["provider"];
+                string url = (string)jObject["url"];
+
+
+                string htmlContent = "<body style=\"display: flex;  justify-content: center;  align-items: center;\" >";
+
+                if (type.Contains("Youtube"))
+                    htmlContent = string.Format("<iframe src=\"{0}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted - media; gyroscope; picture-in-picture\" allowfullscreen></iframe>", url);
+                if (type.Contains("Vimeo"))
+                    htmlContent = string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
+                if (type.Contains("HTML5") || type.Contains("file"))
+                    htmlContent += string.Format("<video width=\"100%\" controls playsinline id=\"player\" class=\"html-video-frame\" src=\"{0}\" type=\"video/mp4\"></video>", url);
+
+                htmlContent += string.Format("<marquee width=\"100%\" behavior=\"scroll\" direction=\"left\" scrollamount=\"1\" style=\"top: 50%; position: absolute; color: gray; font - size: 40px; \">{0}</marquee>", userId);
+                htmlContent += "</body>";
+
+                MainPage.webViewMainContent.NavigateToString(htmlContent);
+            }
+            catch (Exception ex)
+            {
+                httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
+            }
         }
     }
 }
