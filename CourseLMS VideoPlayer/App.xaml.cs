@@ -155,9 +155,9 @@ namespace CourseLMS_VideoPlayer
                 string htmlContent = "<body style=\"display: flex;  justify-content: center;  align-items: center;\" >";
 
                 if (type.Contains("Youtube"))
-                    htmlContent = string.Format("<iframe src=\"{0}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted - media; gyroscope; picture-in-picture\" allowfullscreen></iframe>", url);
+                    htmlContent += string.Format("<iframe width=\"100%\" src=\"{0}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted - media; gyroscope; picture-in-picture\" allowfullscreen></iframe>", url);
                 if (type.Contains("Vimeo"))
-                    htmlContent = string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
+                    htmlContent += string.Format("<iframe src=\"https://player.vimeo.com/video/{0}\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen></iframe>", url);
                 if (type.Contains("HTML5") || type.Contains("file"))
                     htmlContent += string.Format("<video width=\"100%\" controls playsinline id=\"player\" class=\"html-video-frame\" src=\"{0}\" type=\"video/mp4\"></video>", url);
 
